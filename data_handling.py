@@ -1,5 +1,6 @@
 import os
 import pandas as pd
+import numpy as np
 from datetime import datetime
 import yfinance
 
@@ -29,6 +30,7 @@ def load_crypto_csv(path, asset_name):
 
   # Rename the columns to 'Date' and Close
   df.columns = ['Date', asset_name + "_Close"]
+  
   return df
 
 def merge_crypto_data(asset_files):
@@ -44,16 +46,32 @@ def merge_crypto_data(asset_files):
   merged_df = dataframes[0]
   for df in dataframes[1:]:
     merged_df = pd.merge(merged_df, df, on='Date')
+
   return merged_df
+
+def make_sequences(data, feature_cols, target_col, lookback):
+  # Initialize lists to hold the sequences of features and targets
+  X = []
+  y = []
+
+  # Create sequences of features and corresponding targets
+  for i in range(len(data) - lookback):
+    X_window = data[feature_cols].iloc[i:i+lookback].values
+    y_value = data[target_col].iloc[i+lookback]
+    X.append(X_window)
+    y.append(y_value)
+
+  return np.array(X), np.array(y)
 
 if __name__ == "__main__":
     # Define the cryptocurrency tickers to download
-    tickers = ["ETH-USD", "BTC-USD", "XRP-USD", "SOL-USD"]
+    tickers = ["ETH-USD", "BTC-USD", "XRP-USD", "SOL-USD", "DOGE-USD"]
     asset_files = {
     "BTC": "data/BTC_USD.csv",
     "ETH": "data/ETH_USD.csv",
     "XRP": "data/XRP_USD.csv",
-    "SOL": "data/SOL_USD.csv"
+    "SOL": "data/SOL_USD.csv",
+    "DOGE": "data/DOGE_USD.csv"
     }
 
     fetch_crypto_data(tickers)
