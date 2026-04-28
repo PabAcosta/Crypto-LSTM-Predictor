@@ -30,7 +30,7 @@ def load_crypto_csv(path, asset_name):
 
   # Rename the columns to 'Date' and Close
   df.columns = ['Date', asset_name + "_Close"]
-  
+
   return df
 
 def merge_crypto_data(asset_files):
@@ -62,6 +62,18 @@ def make_sequences(data, feature_cols, target_col, lookback):
     y.append(y_value)
 
   return np.array(X), np.array(y)
+
+def split_data(X, y, train_ratio):
+  # Calculate the index at which to split the data
+  split_index = int(len(X) * train_ratio)
+
+  # Split the data into training and testing sets
+  X_train = X[:split_index]
+  X_test = X[split_index:]
+  y_train = y[:split_index]
+  y_test = y[split_index:]
+
+  return X_train, X_test, y_train, y_test
 
 if __name__ == "__main__":
     # Define the cryptocurrency tickers to download
