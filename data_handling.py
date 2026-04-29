@@ -1,6 +1,5 @@
 import os
 import pandas as pd
-import numpy as np
 from datetime import datetime
 import yfinance
 
@@ -48,32 +47,6 @@ def merge_crypto_data(asset_files):
     merged_df = pd.merge(merged_df, df, on='Date')
 
   return merged_df
-
-def make_sequences(data, feature_cols, target_col, lookback):
-  # Initialize lists to hold the sequences of features and targets
-  X = []
-  y = []
-
-  # Create sequences of features and corresponding targets
-  for i in range(len(data) - lookback):
-    X_window = data[feature_cols].iloc[i:i+lookback].values
-    y_value = data[target_col].iloc[i+lookback]
-    X.append(X_window)
-    y.append(y_value)
-
-  return np.array(X), np.array(y)
-
-def split_data(X, y, train_ratio):
-  # Calculate the index at which to split the data
-  split_index = int(len(X) * train_ratio)
-
-  # Split the data into training and testing sets
-  X_train = X[:split_index]
-  X_test = X[split_index:]
-  y_train = y[:split_index]
-  y_test = y[split_index:]
-
-  return X_train, X_test, y_train, y_test
 
 if __name__ == "__main__":
     # Define the cryptocurrency tickers to download
