@@ -1,5 +1,6 @@
 import numpy as np
 import data_handling as dh
+import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
 
 def make_sequences(data, feature_cols, target_col, lookback):
@@ -38,3 +39,42 @@ def scale_data(data, feature_cols, target_col):
   scaled_target = target_scaler.fit_transform(data[[target_col]])
 
   return scaled_features, scaled_target, feature_scaler, target_scaler
+
+def prepare_training_data(merged_df, feature_cols, target_col, lookback, train_ratio):
+  # Scale the features and target
+  scaled_features, scaled_target, feature_scaler, target_scaler = scale_data(merged_df,feature_cols,target_col)
+  scaled_df = merged_df.copy()
+  scaled_df[feature_cols] = scaled_features
+  scaled_df[target_col] = scaled_target
+
+  # Create sequences of features and corresponding targets
+  X,y = make_sequences(scaled_df,feature_cols,target_col,lookback)
+  X_train, X_test, y_train, y_test = split_data(X,y,train_ratio)
+
+  return X_train, X_test, y_train, y_test, feature_scaler, target_scaler 
+
+def build_lstm_model(input_shape):
+  return
+
+def train_model_for_target():
+  return
+
+if __name__ == "__main__":
+  # Define the cryptocurrency tickers to download
+  tickers = ["ETH-USD", "BTC-USD", "XRP-USD", "SOL-USD", "DOGE-USD"]
+  asset_files = {
+  "BTC": "data/BTC_USD.csv",
+  "ETH": "data/ETH_USD.csv",
+  "XRP": "data/XRP_USD.csv",
+  "SOL": "data/SOL_USD.csv",
+  "DOGE": "data/DOGE_USD.csv"
+  }
+
+  dh.fetch_crypto_data(tickers)
+  merged_df = dh.merge_crypto_data(asset_files)
+
+  feature_cols = ["BTC_Close", "ETH_Close"]
+  target_col = "XRP_Close"
+
+  prepare_training_data(merged_df,feature_cols,target_col,60,0.8)
+  print(type(merged_df))

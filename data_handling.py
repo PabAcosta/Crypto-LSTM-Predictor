@@ -47,17 +47,3 @@ def merge_crypto_data(asset_files):
     merged_df = pd.merge(merged_df, df, on='Date')
 
   return merged_df
-
-if __name__ == "__main__":
-    # Define the cryptocurrency tickers to download
-    tickers = ["ETH-USD", "BTC-USD", "XRP-USD", "SOL-USD", "DOGE-USD"]
-    asset_files = {
-    "BTC": "data/BTC_USD.csv",
-    "ETH": "data/ETH_USD.csv",
-    "XRP": "data/XRP_USD.csv",
-    "SOL": "data/SOL_USD.csv",
-    "DOGE": "data/DOGE_USD.csv"
-    }
-
-    fetch_crypto_data(tickers)
-    merge_crypto_data(asset_files)
