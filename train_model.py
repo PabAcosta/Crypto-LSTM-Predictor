@@ -55,21 +55,30 @@ def prepare_training_data(merged_df, feature_cols, target_col, lookback, train_r
   return X_train, X_test, y_train, y_test, feature_scaler, target_scaler 
 
 def build_lstm_model(input_shape):
+  # Build the LSTM model
   model = Sequential()
   model.add(LSTM(50, return_sequences=True, input_shape=input_shape))
   model.add(LSTM(50))
   model.add(Dense(25))
   model.add(Dense(1))
 
+  # Compile the model
   model.compile(optimizer="adam", loss="mean_squared_error")
+
   return model
 
-def train_model_for_target():
-  # prepare the data
-  # build the model
-  # fit the model
-  # return the model and scalers
-  return
+def train_model_for_target(merged_df, feature_cols, target_col, lookback, train_ratio, epochs, batch_size):
+  # Prepare the data
+  X_train, X_test, y_train, y_test, feature_scaler, target_scaler = prepare_training_data(merged_df, feature_cols, target_col, lookback, train_ratio)
+  
+  # Build the model
+  input_shape = (X_train.shape[1], X_train.shape[2])
+  model = build_lstm_model(input_shape)
+  
+  # Fit the model
+  model.fit(X_train, y_train, epochs=epochs, batch_size=batch_size)
+
+  return model, X_test, y_test, feature_scaler, target_scaler
 
 if __name__ == "__main__":
   # Define the cryptocurrency tickers to download
@@ -88,6 +97,5 @@ if __name__ == "__main__":
   feature_cols = ["BTC_Close", "ETH_Close"]
   target_col = "XRP_Close"
 
-  prepare_training_data(merged_df,feature_cols,target_col,60,0.8)
-  model = build_lstm_model((60, 2))
-  print(type(merged_df))
+  train_model_for_target(merged_df,feature_cols,target_col,60,0.8,50,32)
+  
