@@ -1,6 +1,7 @@
 import numpy as np
 import data_handling as dh
 import pandas as pd
+from tensorflow import Sequential, LSTM, Dense
 from sklearn.preprocessing import MinMaxScaler
 
 def make_sequences(data, feature_cols, target_col, lookback):
@@ -54,9 +55,20 @@ def prepare_training_data(merged_df, feature_cols, target_col, lookback, train_r
   return X_train, X_test, y_train, y_test, feature_scaler, target_scaler 
 
 def build_lstm_model(input_shape):
-  return
+  model = Sequential()
+  model.add(LSTM(50, return_sequences=True, input_shape=input_shape))
+  model.add(LSTM(50))
+  model.add(Dense(25))
+  model.add(Dense(1))
+
+  model.compile(optimizer="adam", loss="mean_squared_error")
+  return model
 
 def train_model_for_target():
+  # prepare the data
+  # build the model
+  # fit the model
+  # return the model and scalers
   return
 
 if __name__ == "__main__":
@@ -77,4 +89,5 @@ if __name__ == "__main__":
   target_col = "XRP_Close"
 
   prepare_training_data(merged_df,feature_cols,target_col,60,0.8)
+  model = build_lstm_model((60, 2))
   print(type(merged_df))
