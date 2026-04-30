@@ -1,7 +1,8 @@
 import numpy as np
 import data_handling as dh
 import pandas as pd
-from tensorflow import Sequential, LSTM, Dense
+import tensorflow as tf
+from tensorflow.keras.layers import LSTM, Dense
 from sklearn.preprocessing import MinMaxScaler
 
 def make_sequences(data, feature_cols, target_col, lookback):
@@ -46,7 +47,7 @@ def prepare_training_data(merged_df, feature_cols, target_col, lookback, train_r
   scaled_features, scaled_target, feature_scaler, target_scaler = scale_data(merged_df,feature_cols,target_col)
   scaled_df = merged_df.copy()
   scaled_df[feature_cols] = scaled_features
-  scaled_df[target_col] = scaled_target
+  scaled_df[target_col] = scaled_target.flatten()
 
   # Create sequences of features and corresponding targets
   X,y = make_sequences(scaled_df,feature_cols,target_col,lookback)
@@ -56,7 +57,7 @@ def prepare_training_data(merged_df, feature_cols, target_col, lookback, train_r
 
 def build_lstm_model(input_shape):
   # Build the LSTM model
-  model = Sequential()
+  model = tf.keras.Sequential()
   model.add(LSTM(50, return_sequences=True, input_shape=input_shape))
   model.add(LSTM(50))
   model.add(Dense(25))
@@ -97,5 +98,8 @@ if __name__ == "__main__":
   feature_cols = ["BTC_Close", "ETH_Close"]
   target_col = "XRP_Close"
 
-  train_model_for_target(merged_df,feature_cols,target_col,60,0.8,50,32)
+  model, X_test, y_test, feature_scaler, target_scaler = train_model_for_target(merged_df,feature_cols,target_col,60,0.8,50,32)
+
+  print(X_test.shape)
+  print(y_test.shape)
   
